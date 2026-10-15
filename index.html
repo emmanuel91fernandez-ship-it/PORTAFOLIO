@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Emmanuel Fernandez · Un WhatsApp que contesta por vos</title>
+  <meta name="description" content="Armo WhatsApps con IA que responden horarios, servicios y preguntas frecuentes a cualquier hora. La Plata.">
+
+  <style>
+    /* ==========================================================
+       1. VARIABLES DE DISEÑO
+       Cambiando estos valores se cambia toda la página.
+       ========================================================== */
+    :root {
+      --color-fondo: #f7f8fa;
+      --color-tarjeta: #ffffff;
+      --color-texto: #1f2937;
+      --color-texto-suave: #5b6472;
+      --color-principal: #128c7e;      /* verde tipo WhatsApp, sobrio */
+      --color-principal-oscuro: #0d6b60;
+      --color-borde: #e3e6eb;
+      --radio: 14px;
+      --ancho-max: 760px;
+    }
+
+    /* ==========================================================
+       2. ESTILOS BASE
+       ========================================================== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--color-fondo);
+      color: var(--color-texto);
+      line-height: 1.6;
+      font-size: 17px;
+    }
+
+    /* Contenedor centrado: en el celular ocupa todo el ancho */
+    .contenedor {
+      max-width: var(--ancho-max);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ==========================================================
+       3. HEADER (con mi nombre)
+       ========================================================== */
+    header {
+      background: var(--color-tarjeta);
+      border-bottom: 1px solid var(--color-borde);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header .contenedor {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 60px;
+    }
+    .marca { font-weight: 700; font-size: 1.05rem; }
+    .marca span { color: var(--color-principal); }
+
+    /* El menú se oculta en pantallas chicas para que no se amontone */
+    nav { display: none; }
+    nav a {
+      color: var(--color-texto-suave);
+      text-decoration: none;
+      font-size: 0.92rem;
+      margin-left: 16px;
+    }
+    nav a:hover { color: var(--color-principal); }
+    @media (min-width: 720px) { nav { display: block; } }
+
+    /* ==========================================================
+       4. SECCIONES
+       ========================================================== */
+    section { padding: 56px 0; }
+    section:nth-of-type(even) { background: var(--color-tarjeta); }
+
+    h1 {
+      font-size: clamp(2rem, 7vw, 2.8rem);
+      line-height: 1.15;
+      margin-bottom: 18px;
+    }
+    h2 {
+      font-size: clamp(1.5rem, 5vw, 1.9rem);
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    p { margin-bottom: 14px; color: var(--color-texto-suave); }
+    p:last-child { margin-bottom: 0; }
+    p strong { color: var(--color-texto); }
+
+    /* Sección de presentación (la primera, más grande) */
+    #presentacion { padding: 64px 0 56px; }
+    #presentacion p { font-size: 1.1rem; }
+
+    /* Listas de "para quién sí / no" */
+    .lista-titulo { font-size: 1.05rem; margin: 18px 0 8px; }
+    .lista-titulo.si { color: var(--color-principal); }
+    .lista-titulo.no { color: #b45309; }
+    .lista { list-style: none; margin-bottom: 14px; }
+    .lista li {
+      position: relative;
+      padding-left: 28px;
+      margin-bottom: 8px;
+      color: var(--color-texto-suave);
+    }
+    .lista li::before {
+      position: absolute;
+      left: 0;
+      font-weight: 700;
+    }
+    .lista.si li::before { content: "✓"; color: var(--color-principal); }
+    .lista.no li::before { content: "✕"; color: #b45309; }
+
+    /* ==========================================================
+       5. BOTONES (CTA)
+       ========================================================== */
+    .boton {
+      display: inline-block;
+      background: var(--color-principal);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 15px 28px;
+      border-radius: 999px;
+      margin-top: 8px;
+      transition: background 0.2s;
+      text-align: center;
+    }
+    .boton:hover { background: var(--color-principal-oscuro); }
+
+    /* En el celular el botón ocupa todo el ancho: más fácil de tocar */
+    @media (max-width: 520px) {
+      .boton { display: block; }
+    }
+
+    .enlace-simple { color: var(--color-principal); font-weight: 600; }
+
+    /* ==========================================================
+       6. DEMO: antes / después + caja vacía
+       ========================================================== */
+    .antes-despues {
+      display: grid;
+      gap: 14px;
+      margin: 20px 0;
+    }
+    @media (min-width: 640px) {
+      .antes-despues { grid-template-columns: 1fr 1fr; }
+    }
+    .tarjeta {
+      background: var(--color-fondo);
+      border: 1px solid var(--color-borde);
+      border-radius: var(--radio);
+      padding: 18px;
+    }
+    .tarjeta h3 { font-size: 1rem; margin-bottom: 8px; }
+    .tarjeta.antes h3 { color: #b45309; }
+    .tarjeta.despues h3 { color: var(--color-principal); }
+
+    /* Caja vacía donde después va la demo (chat simulado, video, etc.) */
+    .caja-demo {
+      min-height: 220px;
+      border: 2px dashed var(--color-borde);
+      border-radius: var(--radio);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-texto-suave);
+      font-size: 0.95rem;
+      text-align: center;
+      padding: 20px;
+    }
+
+    /* ==========================================================
+       7. PREGUNTAS FRECUENTES (desplegables, sin JavaScript)
+       ========================================================== */
+    details {
+      background: var(--color-fondo);
+      border: 1px solid var(--color-borde);
+      border-radius: var(--radio);
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    summary {
+      cursor: pointer;
+      padding: 16px 18px;
+      font-weight: 600;
+      list-style: none;           /* saca el triangulito por defecto */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after {
+      content: "+";
+      font-size: 1.4rem;
+      color: var(--color-principal);
+      flex-shrink: 0;
+    }
+    details[open] summary::after { content: "–"; }
+    details p { padding: 0 18px 16px; }
+
+    /* ==========================================================
+       8. CTA FINAL Y PIE
+       ========================================================== */
+    #agendar { text-align: center; }
+    #agendar .boton { margin-top: 12px; }
+
+    footer {
+      padding: 28px 0;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--color-texto-suave);
+      border-top: 1px solid var(--color-borde);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header>
+    <div class="contenedor">
+      <div class="marca">Emmanuel <span>Fernandez</span></div>
+      <nav aria-label="Secciones">
+        <a href="#para-quien">¿Es para vos?</a>
+        <a href="#demo">Demo</a>
+        <a href="#como-trabajo">Cómo trabajo</a>
+        <a href="#faq">Preguntas</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ========== 1. PRESENTACIÓN ========== -->
+    <section id="presentacion">
+      <div class="contenedor">
+        <!-- Frase de oferta: qué se lleva el cliente, en una línea -->
+        <h1>Tu WhatsApp responde horarios, servicios y consultas solo, a cualquier hora</h1>
+        <p>Soy Emmanuel, de La Plata. Armo automatizaciones y soluciones a medida para negocios que todavía hacen todo a mano.</p>
+        <p>Primero lo probé en mi propia gestoría, Gestión 44, y hoy contesta solo. Acá hablás conmigo, sin intermediarios.</p>
+      </div>
+    </section>
+
+    <!-- ========== 2. PARA QUIÉN SÍ / PARA QUIÉN NO ========== -->
+    <section id="para-quien">
+      <div class="contenedor">
+        <h2>¿Es para vos?</h2>
+        <h3 class="lista-titulo si">Sí, si…</h3>
+        <ul class="lista si">
+          <li>Tenés un comercio o estudio de barrio: bicicletería, gestoría, ferretería, inmobiliaria, taller.</li>
+          <li>Sos pocos y la misma persona atiende, vende y contesta mensajes.</li>
+          <li>Contestás lo mismo veinte veces por día y se te pierden ventas por mensajes sin leer.</li>
+        </ul>
+
+        <h3 class="lista-titulo no">No, si…</h3>
+        <ul class="lista no">
+          <li>Recibís dos mensajes por semana.</li>
+          <li>Querés un sistema gigante con diez áreas.</li>
+          <li>No tenés una hora para contarme qué te preguntan y cómo contestás.</li>
+        </ul>
+        <p>Mejor te lo digo de entrada.</p>
+      </div>
+    </section>
+
+    <!-- ========== 3. DEMO (ANTES Y DESPUÉS) ========== -->
+    <section id="demo">
+      <div class="contenedor">
+        <h2>Mirá la diferencia</h2>
+
+        <div class="antes-despues">
+          <div class="tarjeta antes">
+            <h3>Antes</h3>
+            <p>El mensaje queda sin leer, vos contestás lo mismo veinte veces y se te enfría la venta.</p>
+          </div>
+          <div class="tarjeta despues">
+            <h3>Después</h3>
+            <p>El cliente pregunta, recibe la respuesta en segundos con tu forma de hablar, y si es algo complejo te lo pasa a vos.</p>
+          </div>
+        </div>
+
+        <!-- Caja vacía: acá va la demo más adelante (chat simulado, capturas, video) -->
+        <div class="caja-demo">Acá va la demo (próximamente)</div>
+      </div>
+    </section>
+
+    <!-- ========== 4. CÓMO TRABAJO, PASO A PASO ========== -->
+    <section id="como-trabajo">
+      <div class="contenedor">
+        <h2>En 10 días lo tenés andando</h2>
+        <p>Charla corta para ver si te conviene, una hora para que me cuentes qué te preguntan y cómo contestás, y yo lo armo sobre tu WhatsApp de siempre. Sin cambiar de número.</p>
+        <p>Los primeros días lo probamos juntos y corrijo cada respuesta. Al final queda todo a tu nombre y con una guía corta para tu equipo.</p>
+      </div>
+    </section>
+
+    <!-- ========== 5. CÓMO SE ARMA UN PRESUPUESTO (sin precios) ========== -->
+    <section id="presupuesto">
+      <div class="contenedor">
+        <h2>El precio se habla de persona, no en una página</h2>
+        <p>Cada negocio es distinto, así que el número lo hablamos en una reunión 1:1, después de que veas la demo. Nunca antes.</p>
+        <p>Te paso un precio cerrado, sin sorpresas. El mantenimiento mensual es opcional: si no lo querés, no lo pagás.</p>
+      </div>
+    </section>
+
+    <!-- ========== 6. PREGUNTAS FRECUENTES (desplegables) ========== -->
+    <section id="faq">
+      <div class="contenedor">
+        <h2>Lo que casi todos me preguntan</h2>
+
+        <details>
+          <summary>¿Se van a dar cuenta de que es un robot?</summary>
+          <p>Responde con tu forma de hablar y, si no sabe algo, te lo pasa a vos. No inventa.</p>
+        </details>
+
+        <details>
+          <summary>¿Tengo que cambiar de número?</summary>
+          <p>No, trabajamos sobre tu WhatsApp actual.</p>
+        </details>
+
+        <details>
+          <summary>¿Y si se equivoca?</summary>
+          <p>Los primeros días lo revisamos juntos y vos podés cambiar la información cuando quieras.</p>
+        </details>
+
+        <details>
+          <summary>¿Cuánto sale y tengo que pagar todos los meses?</summary>
+          <p>El precio se habla en la reunión; el mantenimiento es opcional.</p>
+        </details>
+
+        <details>
+          <summary>¿Qué pasa con los datos de mis clientes?</summary>
+          <p>Quedan en cuentas a tu nombre y se usan solo para atenderlos.</p>
+        </details>
+
+        <details>
+          <summary>¿Y si después quiero stock, turnos o cobros?</summary>
+          <p>Se suma por partes, sobre lo ya armado, cuando vos decidas.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- ========== 7. BOTÓN PARA AGENDAR ========== -->
+    <section id="agendar">
+      <div class="contenedor">
+        <h2>Agendemos 20 minutos</h2>
+        <p>Contame qué tarea te gustaría no hacer nunca más y te digo, sin vueltas, si se puede resolver.</p>
+        <p>Elegí un horario y listo; si preferís escribir, también estoy en <a class="enlace-simple" href="https://wa.me/5492214191335" target="_blank" rel="noopener">WhatsApp</a>.</p>
+
+        <!-- TODO: reemplazar href="#agendar" por el link real de agenda (Calendly, Google Calendar, etc.) -->
+        <a class="boton" href="#agendar">Agendá una reunión de 20 minutos</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== PIE ========== -->
+  <footer>
+    <div class="contenedor">
+      <p>© <span id="anio">2026</span> Emmanuel Fernandez · La Plata, Buenos Aires</p>
+    </div>
+  </footer>
+
+  <script>
+    /* Pone el año actual en el pie de página automáticamente.
+       Si el JavaScript no corriera, queda el 2026 escrito arriba. */
+    document.getElementById("anio").textContent = new Date().getFullYear();
+  </script>
+
+</body>
+</html>
