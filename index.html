@@ -179,6 +179,69 @@
     }
 
     /* ==========================================================
+       6b. CÓMO TRABAJO: pasos numerados
+       ========================================================== */
+    .pasos {
+      list-style: none;
+      counter-reset: paso;              /* arranca el contador en 0 */
+      margin: 22px 0 18px;
+    }
+    .pasos li {
+      counter-increment: paso;          /* suma 1 en cada paso */
+      position: relative;
+      padding: 0 0 22px 52px;
+    }
+    /* Círculo con el número */
+    .pasos li::before {
+      content: counter(paso);
+      position: absolute;
+      left: 0; top: 0;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--color-principal);
+      color: #fff;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Línea que une un número con el siguiente */
+    .pasos li::after {
+      content: "";
+      position: absolute;
+      left: 17px; top: 40px; bottom: 4px;
+      width: 2px;
+      background: var(--color-borde);
+    }
+    .pasos li:last-child { padding-bottom: 0; }
+    .pasos li:last-child::after { display: none; }
+
+    .pasos h3 { font-size: 1.08rem; line-height: 1.3; margin: 4px 0 4px; }
+    .pasos p { margin-bottom: 0; }
+
+    /* Etiqueta que marca los dos pasos clave (demo e inversión) */
+    .etiqueta {
+      display: inline-block;
+      background: #e7f5f3;
+      color: var(--color-principal-oscuro);
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 2px 10px;
+      margin-bottom: 4px;
+    }
+
+    /* Recuadro que deja el orden bien explícito */
+    .orden {
+      background: var(--color-fondo);
+      border: 1px solid var(--color-borde);
+      border-left: 4px solid var(--color-principal);
+      border-radius: var(--radio);
+      padding: 14px 16px;
+    }
+    .orden p { color: var(--color-texto); margin: 0; }
+
+    /* ==========================================================
        7. PREGUNTAS FRECUENTES (desplegables, sin JavaScript)
        ========================================================== */
     details {
@@ -297,8 +360,40 @@
     <section id="como-trabajo">
       <div class="contenedor">
         <h2>En 10 días lo tenés andando</h2>
-        <p>Charla corta para ver si te conviene, una hora para que me cuentes qué te preguntan y cómo contestás, y yo lo armo sobre tu WhatsApp de siempre. Sin cambiar de número.</p>
-        <p>Los primeros días lo probamos juntos y corrijo cada respuesta. Al final queda todo a tu nombre y con una guía corta para tu equipo.</p>
+        <p>Así trabajo, en este orden y sin saltear nada.</p>
+
+        <ol class="pasos">
+          <li>
+            <h3>Charlamos 20 minutos</h3>
+            <p>Me contás qué tarea te gustaría no hacer nunca más. Yo te digo, sin vueltas, si se puede resolver. Si no te conviene, te lo digo.</p>
+          </li>
+          <li>
+            <h3>Me contás cómo atendés hoy</h3>
+            <p>Una hora para que me cuentes qué te preguntan y cómo contestás. Hablamos de tu negocio, no de tecnología.</p>
+          </li>
+          <li>
+            <span class="etiqueta">Primero, la demo</span>
+            <h3>Ves cómo quedaría</h3>
+            <p>Te muestro un WhatsApp funcionando con las preguntas de tu rubro, y lo probás vos desde tu celular. Podés ir viendo una <a class="enlace-simple" href="demo-de-muestra/index.html">demo de muestra</a>. Todavía no hablamos de plata.</p>
+          </li>
+          <li>
+            <span class="etiqueta">Recién acá, la inversión</span>
+            <h3>Reunión 1:1 y hablamos de inversión</h3>
+            <p>Con la demo ya vista, nos sentamos y te paso un precio cerrado, sin sorpresas. Si no te cierra, ahí queda y seguimos siendo conocidos.</p>
+          </li>
+          <li>
+            <h3>Lo armo sobre tu WhatsApp de siempre</h3>
+            <p>Sin cambiar de número. Cargo tus horarios, tus servicios y tu forma de hablar. Todo queda a tu nombre.</p>
+          </li>
+          <li>
+            <h3>Lo probamos juntos y te lo dejo andando</h3>
+            <p>Los primeros días lo probamos juntos y corrijo cada respuesta. Al final te dejo una guía corta para tu equipo.</p>
+          </li>
+        </ol>
+
+        <div class="orden">
+          <p><strong>El orden es siempre el mismo:</strong> primero ves la demo, y recién en la reunión 1:1 hablamos de inversión. Nunca al revés.</p>
+        </div>
       </div>
     </section>
 
