@@ -164,18 +164,174 @@
     .tarjeta.antes h3 { color: #b45309; }
     .tarjeta.despues h3 { color: var(--color-principal); }
 
-    /* Caja vacía donde después va la demo (chat simulado, video, etc.) */
-    .caja-demo {
-      min-height: 220px;
-      border: 2px dashed var(--color-borde);
+    /* Demo: chat de WhatsApp simulado */
+    .demo-intro { font-size: 0.98rem; margin-bottom: 12px; }
+
+    /* Texto solo para lectores de pantalla (el label del campo de texto) */
+    .solo-lector {
+      position: absolute;
+      width: 1px; height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    /* Ventana del chat */
+    .chat {
+      max-width: 520px;
+      margin: 0 auto 8px;
+      border: 1px solid var(--color-borde);
       border-radius: var(--radio);
+      overflow: hidden;
+      background: #efeae2;              /* beige tipo WhatsApp */
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    }
+    .chat-cabecera {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--color-principal-oscuro);
+      color: #fff;
+      padding: 10px 12px;
+    }
+    .chat-avatar {
+      width: 38px; height: 38px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: #fff;
+      color: var(--color-principal-oscuro);
+      font-weight: 700;
+      font-size: 0.9rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--color-texto-suave);
+    }
+    .chat-titulo { flex: 1; min-width: 0; line-height: 1.25; }
+    .chat-nombre { font-weight: 600; font-size: 0.98rem; }
+    .chat-estado { font-size: 0.78rem; opacity: 0.85; }
+    .chat-reiniciar {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .chat-reiniciar:hover { background: rgba(255, 255, 255, 0.15); }
+
+    /* Zona de mensajes (con scroll propio) */
+    .chat-mensajes {
+      height: 340px;
+      overflow-y: auto;
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .msg {
+      max-width: 85%;
+      padding: 8px 11px;
+      border-radius: 10px;
       font-size: 0.95rem;
+      line-height: 1.45;
+      white-space: pre-line;            /* respeta los saltos de línea */
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+      color: var(--color-texto);
+    }
+    .msg.cliente { align-self: flex-end; background: #d9fdd3; border-top-right-radius: 2px; }
+    .msg.bot     { align-self: flex-start; background: #fff; border-top-left-radius: 2px; }
+    .msg-hora {
+      display: block;
+      text-align: right;
+      font-size: 0.7rem;
+      color: #7b8391;
+      margin-top: 2px;
+    }
+    /* Aviso de que la consulta pasó a una persona */
+    .msg.nota {
+      align-self: center;
+      max-width: 95%;
+      background: #fff4d6;
+      color: #7a5a00;
+      font-size: 0.82rem;
       text-align: center;
-      padding: 20px;
+      border-radius: 999px;
+      padding: 6px 14px;
+    }
+    /* Puntitos de "escribiendo…" */
+    .msg.escribiendo { display: flex; gap: 4px; padding: 12px 14px; }
+    .msg.escribiendo span {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #9aa3ad;
+      animation: rebote 1s infinite;
+    }
+    .msg.escribiendo span:nth-child(2) { animation-delay: 0.15s; }
+    .msg.escribiendo span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes rebote {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .msg.escribiendo span { animation: none; }
+    }
+
+    /* Preguntas sugeridas (botones) */
+    .chat-sugerencias {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px 10px;
+      background: #f7f4ee;
+      border-top: 1px solid var(--color-borde);
+    }
+    .chat-sugerencias button {
+      background: #fff;
+      color: var(--color-principal-oscuro);
+      border: 1px solid var(--color-principal);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      min-height: 40px;
+    }
+    .chat-sugerencias button:hover { background: #e7f5f3; }
+
+    /* Campo para escribir */
+    .chat-form {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      background: #f0f2f5;
+      border-top: 1px solid var(--color-borde);
+    }
+    .chat-form input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid var(--color-borde);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 16px;                  /* 16px evita el zoom automático en iPhone */
+      font-family: inherit;
+    }
+    .chat-form button {
+      background: var(--color-principal);
+      color: #fff;
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .chat-form button:hover { background: var(--color-principal-oscuro); }
+    .chat-form button:disabled { opacity: 0.6; cursor: default; }
+
+    .demo-aviso {
+      max-width: 520px;
+      margin: 8px auto 0;
+      font-size: 0.82rem;
+      text-align: center;
     }
 
     /* ==========================================================
@@ -351,8 +507,30 @@
           </div>
         </div>
 
-        <!-- Caja vacía: acá va la demo más adelante (chat simulado, capturas, video) -->
-        <div class="caja-demo">Acá va la demo (próximamente)</div>
+        <!-- Demo: chat de WhatsApp simulado (sin servidor, sin APIs) -->
+        <p class="demo-intro">Probalo vos: es una bicicletería de ejemplo. Tocá una pregunta o escribí la tuya.</p>
+
+        <div class="chat" role="region" aria-label="Demo de WhatsApp con respuestas automáticas">
+          <div class="chat-cabecera">
+            <div class="chat-avatar" aria-hidden="true">RL</div>
+            <div class="chat-titulo">
+              <div class="chat-nombre">Bicicletería Rueda Libre</div>
+              <div class="chat-estado">responde solo, a cualquier hora</div>
+            </div>
+            <button type="button" class="chat-reiniciar" id="chat-reiniciar">Reiniciar</button>
+          </div>
+
+          <div class="chat-mensajes" id="chat-mensajes" aria-live="polite"></div>
+
+          <div class="chat-sugerencias" id="chat-sugerencias"></div>
+
+          <form class="chat-form" id="chat-form" autocomplete="off">
+            <label class="solo-lector" for="chat-texto">Escribí tu pregunta</label>
+            <input id="chat-texto" type="text" placeholder="Escribí tu pregunta…" maxlength="140">
+            <button type="submit" id="chat-enviar">Enviar</button>
+          </form>
+        </div>
+        <p class="demo-aviso">Negocio y datos de ejemplo. En tu versión van tus horarios, servicios y tu forma de hablar.</p>
       </div>
     </section>
 
@@ -474,8 +652,7 @@
         <p>Contame qué tarea te gustaría no hacer nunca más y te digo, sin vueltas, si se puede resolver.</p>
         <p>Elegí un horario y listo; si preferís escribir, también estoy en <a class="enlace-simple" href="https://wa.me/5492214191335" target="_blank" rel="noopener">WhatsApp</a>.</p>
 
-        <!-- TODO: reemplazar href="#agendar" por el link real de agenda (Calendly, Google Calendar, etc.) -->
-        <a class="boton" href="#agendar">Agendá una reunión de 20 minutos</a>
+        <a class="boton" href="https://wa.me/5492214191335?text=Hola%20Emmanuel%2C%20quiero%20agendar%20la%20reuni%C3%B3n%20de%2020%20minutos." target="_blank" rel="noopener">Agendá una reunión de 20 minutos</a>
       </div>
     </section>
 
@@ -492,6 +669,214 @@
     /* Pone el año actual en el pie de página automáticamente.
        Si el JavaScript no corriera, queda el 2026 escrito arriba. */
     document.getElementById("anio").textContent = new Date().getFullYear();
+  </script>
+
+  <script>
+    (function () {
+
+      // >>> LÓGICA (datos y respuestas)
+
+      /* Cada "intención" es un tipo de pregunta:
+         - palabras: pistas que buscamos en lo que escribe el cliente
+                     (van sin tildes y en minúscula)
+         - respuesta: lo que contesta el asistente
+         - derivar: si es true, la consulta pasa a una persona (el dueño)
+         El orden importa: si dos empatan, gana la que está primero. */
+      var INTENCIONES = [
+        {
+          id: "reclamo", derivar: true,
+          palabras: ["reclamo", "garantia", "queja", "devolucion", "devolver", "defecto", "falla", "me vendieron", "estoy enojado"],
+          respuesta: "Lamento el inconveniente. Esto lo tiene que ver Marcos, el dueño, para darte una solución como corresponde. Si tenés el comprobante o fotos, mandalos por acá así los ve."
+        },
+        {
+          id: "persona", derivar: true,
+          palabras: ["hablar con", "persona", "humano", "dueno", "encargado", "alguien", "llamar", "llamen", "telefono"],
+          respuesta: "Dale, te paso con Marcos, el dueño. Ya le avisé y te responde en cuanto pueda."
+        },
+        {
+          id: "medida", derivar: true,
+          palabras: ["a medida", "presupuesto", "armar una bici", "bici nueva", "comprar una bici", "cotizacion"],
+          respuesta: "Para comprar o armar una bici prefiero que te atienda Marcos directamente, así te asesora bien según lo que buscás. Ya le avisé."
+        },
+        {
+          id: "horarios", derivar: false,
+          palabras: ["horario", "a que hora", "abren", "cierran", "abierto", "atienden", "sabado", "domingo", "feriado"],
+          respuesta: "Abrimos de lunes a viernes de 9 a 13 y de 16 a 20, y los sábados de 9 a 13. Domingos y feriados cerramos."
+        },
+        {
+          id: "turno", derivar: false,
+          palabras: ["turno", "agendar", "reservar", "cuando puedo llevar", "dejar la bici"],
+          respuesta: "Para service tenemos lugar el miércoles y el jueves por la tarde. ¿Cuál te queda mejor?"
+        },
+        {
+          id: "dia_turno", derivar: false,
+          palabras: ["miercoles", "jueves"],
+          respuesta: "Perfecto, te lo dejo anotado para ese día. Marcos te confirma el horario exacto por acá. Pasame tu nombre y el modelo de la bici."
+        },
+        {
+          id: "service", derivar: false,
+          palabras: ["service", "precio", "cuanto sale", "cuanto cuesta", "cuanto vale", "costo", "arreglo", "arreglar", "mantenimiento", "ajuste"],
+          respuesta: "Tenemos dos opciones:\n• Service básico (frenos, cambios, lubricación e inflado): desde $28.000.\n• Service completo (desarme, limpieza profunda y puesta a punto): desde $55.000.\nEl precio final depende del estado de la bici. Si querés, te dejo un turno."
+        },
+        {
+          id: "stock", derivar: false,
+          palabras: ["cubierta", "camara", "rodado", "29", "repuesto", "stock", "cadena", "pedal", "casco", "luces", "disponible"],
+          respuesta: "Sí, trabajamos con cubiertas, cámaras, cadenas, cascos y luces. Para rodado 29 tenemos cubiertas de montaña y de uso mixto. Si me decís el ancho que lleva tu cubierta (está escrito en el costado), te digo cuál te sirve."
+        },
+        {
+          id: "pagos", derivar: false,
+          palabras: ["pago", "pagar", "tarjeta", "efectivo", "transferencia", "cuotas", "mercado pago", "debito", "credito"],
+          respuesta: "Aceptamos efectivo (con 10% de descuento), transferencia y tarjetas de débito y crédito. Con crédito, hasta 3 cuotas sin interés en compras desde $60.000."
+        },
+        {
+          id: "ubicacion", derivar: false,
+          palabras: ["donde", "direccion", "ubicacion", "como llego", "estan", "mapa"],
+          respuesta: "Estamos en calle 66 entre 7 y 8, La Plata. Si venís por un service, dejás la bici y te avisamos por acá cuando esté lista."
+        },
+        {
+          id: "envios", derivar: false,
+          palabras: ["envio", "envian", "mandan", "delivery", "domicilio"],
+          respuesta: "Hacemos envíos dentro de La Plata, en el día si pedís antes de las 12. Para otras ciudades lo vemos caso por caso."
+        },
+        {
+          id: "saludo", derivar: false,
+          palabras: ["hola", "buenas", "buen dia"],
+          respuesta: "¡Hola! Soy el asistente de Rueda Libre. Te cuento horarios, precios de service, repuestos y formas de pago. ¿Qué necesitás?"
+        }
+      ];
+
+      var SALUDO_INICIAL = "¡Hola! Soy el asistente de Rueda Libre. Te cuento horarios, precios de service, repuestos y formas de pago. ¿Qué necesitás?";
+
+      /* Cuando no sabe, NO inventa: avisa y pasa la consulta a una persona. */
+      var NO_SE = "Eso no quiero contestártelo a ciegas para no decirte algo que no es. Se lo paso a Marcos y te responde en cuanto pueda.";
+      var AVISO_DERIVADO = "Pasó a una persona: se avisó a Marcos, el dueño";
+
+      var SUGERENCIAS = [
+        "¿Qué horarios tienen?",
+        "¿Cuánto sale un service?",
+        "¿Tienen cubiertas rodado 29?",
+        "¿Cómo puedo pagar?",
+        "Quiero un turno para service",
+        "Tengo un reclamo por una compra"
+      ];
+
+      /* Saca tildes y mayúsculas para comparar: "Cuánto" -> "cuanto" */
+      function normalizar(texto) {
+        return texto.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+      }
+
+      /* Elige la respuesta que mejor encaja con lo que escribió el cliente */
+      function responder(texto) {
+        var t = normalizar(texto);
+        var mejor = null;
+        var mejorPuntaje = 0;
+
+        INTENCIONES.forEach(function (intencion) {
+          var puntaje = 0;
+          intencion.palabras.forEach(function (palabra) {
+            if (t.indexOf(palabra) !== -1) { puntaje++; }
+          });
+          // Si pide algo delicado (reclamo, hablar con el dueño), tiene prioridad
+          if (puntaje > 0 && intencion.derivar) { puntaje += 2; }
+          if (puntaje > mejorPuntaje) { mejor = intencion; mejorPuntaje = puntaje; }
+        });
+
+        if (!mejor) { return { texto: NO_SE, nota: AVISO_DERIVADO }; }
+        return { texto: mejor.respuesta, nota: mejor.derivar ? AVISO_DERIVADO : null };
+      }
+
+      // <<< LÓGICA
+
+      // ---- INTERFAZ (lo que se ve en pantalla) ----
+      var caja = document.getElementById("chat-mensajes");
+      var sugerencias = document.getElementById("chat-sugerencias");
+      var formulario = document.getElementById("chat-form");
+      var campo = document.getElementById("chat-texto");
+      var botonEnviar = document.getElementById("chat-enviar");
+      var botonReiniciar = document.getElementById("chat-reiniciar");
+      if (!caja || !sugerencias || !formulario || !campo) { return; }
+
+      var ocupado = false;     // true mientras el asistente "escribe"
+      var generacion = 0;      // sube al reiniciar, para descartar respuestas pendientes
+
+      function hora() {
+        return new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false });
+      }
+
+      /* Agrega un globito al chat (textContent: nunca interpreta HTML) */
+      function agregar(clase, texto, conHora) {
+        var globo = document.createElement("div");
+        globo.className = "msg " + clase;
+        globo.textContent = texto;
+        if (conHora) {
+          var h = document.createElement("span");
+          h.className = "msg-hora";
+          h.textContent = hora();
+          globo.appendChild(h);
+        }
+        caja.appendChild(globo);
+        caja.scrollTop = caja.scrollHeight;
+        return globo;
+      }
+
+      function enviar(texto) {
+        texto = texto.trim();
+        if (!texto || ocupado) { return; }
+        ocupado = true;
+        botonEnviar.disabled = true;
+        var miGeneracion = generacion;
+
+        agregar("cliente", texto, true);
+        campo.value = "";
+
+        // Puntitos de "escribiendo…"
+        var escribiendo = document.createElement("div");
+        escribiendo.className = "msg bot escribiendo";
+        escribiendo.setAttribute("aria-label", "Escribiendo");
+        escribiendo.innerHTML = "<span></span><span></span><span></span>";
+        caja.appendChild(escribiendo);
+        caja.scrollTop = caja.scrollHeight;
+
+        setTimeout(function () {
+          if (miGeneracion !== generacion) { return; }
+          escribiendo.remove();
+          var r = responder(texto);
+          agregar("bot", r.texto, true);
+          if (r.nota) {
+            setTimeout(function () {
+              if (miGeneracion === generacion) { agregar("nota", r.nota, false); }
+            }, 400);
+          }
+          ocupado = false;
+          botonEnviar.disabled = false;
+        }, 750);
+      }
+
+      function empezar() {
+        generacion++;
+        ocupado = false;
+        botonEnviar.disabled = false;
+        caja.innerHTML = "";
+        agregar("bot", SALUDO_INICIAL, true);
+      }
+
+      // Botones con preguntas sugeridas
+      SUGERENCIAS.forEach(function (pregunta) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.textContent = pregunta;
+        b.addEventListener("click", function () { enviar(pregunta); });
+        sugerencias.appendChild(b);
+      });
+
+      formulario.addEventListener("submit", function (e) {
+        e.preventDefault();
+        enviar(campo.value);
+      });
+      botonReiniciar.addEventListener("click", empezar);
+
+      empezar();
+    })();
   </script>
 
 </body>
